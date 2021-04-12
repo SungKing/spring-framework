@@ -22,11 +22,14 @@ import org.springframework.lang.Nullable;
 
 /**
  * The root interface for accessing a Spring bean container.
+ * 作为接受spring对象容器的顶级接口
  *
  * <p>This is the basic client view of a bean container;
  * further interfaces such as {@link ListableBeanFactory} and
  * {@link org.springframework.beans.factory.config.ConfigurableBeanFactory}
  * are available for specific purposes.
+ * 这是最基础的查看对象容器的地方
+ * 更好的接口如 ListableBeanFactory 和 ConfigurableBeanFactory 在一个明确的目的面前是更为合适的
  *
  * <p>This interface is implemented by objects that hold a number of bean definitions,
  * each uniquely identified by a String name. Depending on the bean definition,
@@ -38,17 +41,27 @@ import org.springframework.lang.Nullable;
  * 2.0, further scopes are available depending on the concrete application
  * context (e.g. "request" and "session" scopes in a web environment).
  *
+ * 这个接口是被那些持有一串bean描述，依靠名字来唯一确定的 对象所实现。依赖于这些bean描述，工厂可以返回一个独立实例（原型设计模式），
+ * 或者一个单共享实例（单例模式的一个比较好的选择，在此工厂的范围内只有1个实例）。哪一种实例模式被返回取决于工厂的设置：api都是一样的。
+ * 从spring2.0开始，依赖具体的程序上下文会有更多的实例范围。
+ *
+ *
  * <p>The point of this approach is that the BeanFactory is a central registry
  * of application components, and centralizes configuration of application
  * components (no more do individual objects need to read properties files,
  * for example). See chapters 4 and 11 of "Expert One-on-One J2EE Design and
  * Development" for a discussion of the benefits of this approach.
  *
+ * 这样做的目的是 为了让工厂成为实例的注册中心，以及实例的集中化配置（比如：不再去实例化一个需要单独读配置文件的对象）
+ *
  * <p>Note that it is generally better to rely on Dependency Injection
  * ("push" configuration) to configure application objects through setters
  * or constructors, rather than use any form of "pull" configuration like a
  * BeanFactory lookup. Spring's Dependency Injection functionality is
  * implemented using this BeanFactory interface and its subinterfaces.
+ *
+ * 注意 通过set方法或者构造器依赖注入的方式要比 工厂用属性单查找注入的方式要好一些。
+ * spring的依赖注入被BeanFactory接口及其子接口实现
  *
  * <p>Normally a BeanFactory will load bean definitions stored in a configuration
  * source (such as an XML document), and use the {@code org.springframework.beans}
@@ -58,14 +71,24 @@ import org.springframework.lang.Nullable;
  * properties file, etc. Implementations are encouraged to support references
  * amongst beans (Dependency Injection).
  *
+ * 通常 BeanFactory 将会加载那些存储在配置文件中的bean定义，并且用 org.springframework.beans 包去配置beans.
+ * 然而， 一种实现可以非常简单地返回Java对象，就是在java代码里面直接创建
+ * 并没有规定定义要如何存储： LDAP, RDBMS, XML,prop 文件都可以。
+ * 实现鼓励支持引用bean(依赖注入)
+ *
  * <p>In contrast to the methods in {@link ListableBeanFactory}, all of the
  * operations in this interface will also check parent factories if this is a
  * {@link HierarchicalBeanFactory}. If a bean is not found in this factory instance,
  * the immediate parent factory will be asked. Beans in this factory instance
  * are supposed to override beans of the same name in any parent factory.
  *
+ * 与 ListableBeanFactory 中方法对比，如果这是HierarchicalBeanFactory 的话，所有的操作都会检查父工厂。
+ * 如果bean 没在此实例发现，就会立刻询问父工厂。在这个工厂中实例应当覆盖父工厂的实例
+ *
+ *
  * <p>Bean factory implementations should support the standard bean lifecycle interfaces
  * as far as possible. The full set of initialization methods and their standard order is:
+ * 工厂实现应当尽可能支持bean生命周期接口。初始化方法集合以及他们的标准顺序如下：
  * <ol>
  * <li>BeanNameAware's {@code setBeanName}
  * <li>BeanClassLoaderAware's {@code setBeanClassLoader}
@@ -121,17 +144,24 @@ public interface BeanFactory {
 	 * beans <i>created</i> by the FactoryBean. For example, if the bean named
 	 * {@code myJndiObject} is a FactoryBean, getting {@code &myJndiObject}
 	 * will return the factory, not the instance returned by the factory.
+	 *
+	 * 被用来间接引用 FactoryBean 实例 ，区分他从 FactoryBean 创建的bean. 比如，如果一个名叫
+	 * myJndiObject 的是个 FactoryBean， 用 &myJndiObject 获取到的是工厂，而不是工厂返回的实例。
 	 */
 	String FACTORY_BEAN_PREFIX = "&";
 
 
 	/**
 	 * Return an instance, which may be shared or independent, of the specified bean.
+	 * 返回实例，可能共享也可能独立，对指定的bean来说
 	 * <p>This method allows a Spring BeanFactory to be used as a replacement for the
 	 * Singleton or Prototype design pattern. Callers may retain references to
 	 * returned objects in the case of Singleton beans.
+	 * 此方法允许工厂使用原型或者单例模式。就单例而言，调用方可能会持有引用
 	 * <p>Translates aliases back to the corresponding canonical bean name.
+	 * 将别名转换回相应的规范bean名称。
 	 * <p>Will ask the parent factory if the bean cannot be found in this factory instance.
+	 * 询问父工厂是否有此bean
 	 * @param name the name of the bean to retrieve
 	 * @return an instance of the bean
 	 * @throws NoSuchBeanDefinitionException if there is no bean with the specified name
@@ -163,6 +193,7 @@ public interface BeanFactory {
 	 * @param name the name of the bean to retrieve
 	 * @param args arguments to use when creating a bean instance using explicit arguments
 	 * (only applied when creating a new instance as opposed to retrieving an existing one)
+	 *  （仅在创建新实例时有而不是检索已存在的实例）
 	 * @return an instance of the bean
 	 * @throws NoSuchBeanDefinitionException if there is no such bean definition
 	 * @throws BeanDefinitionStoreException if arguments have been given but
@@ -237,15 +268,25 @@ public interface BeanFactory {
 	/**
 	 * Does this bean factory contain a bean definition or externally registered singleton
 	 * instance with the given name?
+	 *
+	 * 工厂是否包含bean定义或者用指定名字注册的单例
+	 *
 	 * <p>If the given name is an alias, it will be translated back to the corresponding
 	 * canonical bean name.
+	 * 名称如果是别名，将转换
 	 * <p>If this factory is hierarchical, will ask any parent factory if the bean cannot
 	 * be found in this factory instance.
+	 *
+	 * 如果工厂是分层的，将询问父工厂是否发现
 	 * <p>If a bean definition or singleton instance matching the given name is found,
 	 * this method will return {@code true} whether the named bean definition is concrete
 	 * or abstract, lazy or eager, in scope or not. Therefore, note that a {@code true}
 	 * return value from this method does not necessarily indicate that {@link #getBean}
 	 * will be able to obtain an instance for the same name.
+	 *
+	 * 如果bean定义或者单例被通过名称发现，此方法将会返回true，无论此定义是具体的还是抽象的，懒的还是急切的，在不在范围。
+	 * 因此，需要注意返回true 并不意味着  getBean 将能获得实例
+	 *
 	 * @param name the name of the bean to query
 	 * @return whether a bean with the given name is present
 	 */
@@ -288,8 +329,10 @@ public interface BeanFactory {
 
 	/**
 	 * Check whether the bean with the given name matches the specified type.
+	 * 检查 通过名称查找出来的bean是否与类型匹配
 	 * More specifically, check whether a {@link #getBean} call for the given name
 	 * would return an object that is assignable to the specified target type.
+	 * 更具体的说，检查 getBean 获取的对象 的类型是否与目标类型匹配
 	 * <p>Translates aliases back to the corresponding canonical bean name.
 	 * <p>Will ask the parent factory if the bean cannot be found in this factory instance.
 	 * @param name the name of the bean to query
@@ -323,9 +366,11 @@ public interface BeanFactory {
 	/**
 	 * Determine the type of the bean with the given name. More specifically,
 	 * determine the type of object that {@link #getBean} would return for the given name.
+	 * 给出此名称查得的bean的类型。具体的说，给出通过getBean 获取到的对象的类型
 	 * <p>For a {@link FactoryBean}, return the type of object that the FactoryBean creates,
 	 * as exposed by {@link FactoryBean#getObjectType()}. This may lead to the initialization
 	 * of a previously uninitialized {@code FactoryBean} (see {@link #getType(String, boolean)}).
+	 * <p>对FactoryBean 来说，
 	 * <p>Translates aliases back to the corresponding canonical bean name.
 	 * <p>Will ask the parent factory if the bean cannot be found in this factory instance.
 	 * @param name the name of the bean to query
