@@ -60,13 +60,14 @@ import org.springframework.util.StringUtils;
 /**
  * Static convenience methods for JavaBeans: for instantiating beans,
  * checking bean property types, copying bean properties, etc.
+ * java bean 的静态便利方法： 提供实例化，属性检查，属性复制等
  *
  * <p>Mainly for internal use within the framework, but to some degree also
  * useful for application classes. Consider
  * <a href="https://commons.apache.org/proper/commons-beanutils/">Apache Commons BeanUtils</a>,
  * <a href="https://hotelsdotcom.github.io/bull/">BULL - Bean Utils Light Library</a>,
  * or similar third-party frameworks for more comprehensive bean utilities.
- *
+ * 主要是框架内部使用，但是有时候一定程度上对程序也有用 ，可以参考..
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Rob Harrop
@@ -179,9 +180,11 @@ public abstract class BeanUtils {
 
 	/**
 	 * Convenience method to instantiate a class using the given constructor.
+	 * 用给定的构造器去实例化
 	 * <p>Note that this method tries to set the constructor accessible if given a
 	 * non-accessible (that is, non-public) constructor, and supports Kotlin classes
 	 * with optional parameters and default values.
+	 * 注意 此方法会设置构造器为 accessible ，如果它未公开的化。也支持Kotlin
 	 * @param ctor the constructor to instantiate
 	 * @param args the constructor arguments to apply (use {@code null} for an unspecified
 	 * parameter, Kotlin optional parameters and Java primitive types are supported)
@@ -201,7 +204,7 @@ public abstract class BeanUtils {
 				Assert.isTrue(args.length <= parameterTypes.length, "Can't specify more arguments than constructor parameters");
 				Object[] argsWithDefaultValues = new Object[args.length];
 				for (int i = 0 ; i < args.length; i++) {
-					if (args[i] == null) {
+					if (args[i] == null) { //如果传入的参数中有null, 对基本类型做一个转换。不包括float和double
 						Class<?> parameterType = parameterTypes[i];
 						argsWithDefaultValues[i] = (parameterType.isPrimitive() ? DEFAULT_TYPE_VALUES.get(parameterType) : null);
 					}
