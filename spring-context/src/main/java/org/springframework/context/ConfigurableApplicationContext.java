@@ -32,10 +32,15 @@ import org.springframework.lang.Nullable;
  * Provides facilities to configure an application context in addition
  * to the application context client methods in the
  * {@link org.springframework.context.ApplicationContext} interface.
+ * 被大对数而不是全部的上线文实现的接口
+ * 提供了一个能够配置上下文在ApplicationContext 接口 上下文客户端方法之外
+ *
  *
  * <p>Configuration and lifecycle methods are encapsulated here to avoid
  * making them obvious to ApplicationContext client code. The present
  * methods should only be used by startup and shutdown code.
+ * 配置和生命周期方法被封装以避免在客户端代码中显现，
+ * 这方法通常仅由启动和关闭代码使用
  *
  * @author Juergen Hoeller
  * @author Chris Beams
@@ -153,6 +158,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	 * Add a new BeanFactoryPostProcessor that will get applied to the internal
 	 * bean factory of this application context on refresh, before any of the
 	 * bean definitions get evaluated. To be invoked during context configuration.
+	 * 添加一个新的 BeanFactoryPostProcessor ，它将会在上下文刷新时进入bean工厂,在bean定义评估之前
+	 * 上下文配置期间会被调用
 	 * @param postProcessor the factory processor to register
 	 */
 	void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
@@ -191,9 +198,12 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	 * Load or refresh the persistent representation of the configuration, which
 	 * might be from Java-based configuration, an XML file, a properties file, a
 	 * relational database schema, or some other format.
+	 * 加载或刷新配置的持久性表示，它可能来自基于Java的配置、XML文件、属性文件、关系数据库模式或其他格式。
 	 * <p>As this is a startup method, it should destroy already created singletons
 	 * if it fails, to avoid dangling resources. In other words, after invocation
 	 * of this method, either all or no singletons at all should be instantiated.
+	 * 由于这是一种启动方法，所以如果失败，它应该销毁已经创建的单例，以避免危及资源。
+	 * 换句话说，在调用此方法之后，应该实例化所有或根本没有单例。
 	 * @throws BeansException if the bean factory could not be initialized
 	 * @throws IllegalStateException if already initialized and multiple refresh
 	 * attempts are not supported

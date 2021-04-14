@@ -33,14 +33,20 @@ import org.springframework.util.Assert;
  * in particular {@link Configuration @Configuration}-annotated classes, but also plain
  * {@link org.springframework.stereotype.Component @Component} types and JSR-330 compliant
  * classes using {@code javax.inject} annotations.
+ * 单独的程序上下文， 接受输入的component ，特别是 @Configuration 注解的类，但同时也接受 @Component 和 使用
+ * javax.inject 中注解的类。
  *
  * <p>Allows for registering classes one by one using {@link #register(Class...)}
  * as well as for classpath scanning using {@link #scan(String...)}.
+ *
+ * 允许用 方法 register（） 一个一个注册，也允许用 scan 来扫描你指定的类路径
  *
  * <p>In case of multiple {@code @Configuration} classes, {@link Bean @Bean} methods
  * defined in later classes will override those defined in earlier classes. This can
  * be leveraged to deliberately override certain bean definitions via an extra
  * {@code @Configuration} class.
+ *
+ * 对于多个@Configuration类，后期类中定义的@Bean方法将覆盖早期类中定义的方法。这可以通过额外的@Configuration类故意覆盖某些bean定义。
  *
  * <p>See {@link Configuration @Configuration}'s javadoc for usage examples.
  *
